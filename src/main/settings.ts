@@ -31,6 +31,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   enableAutoFixProblems: false,
   enableAutoUpdate: true,
   releaseChannel: "stable",
+  enableDyadPro: true,
   selectedTemplateId: DEFAULT_TEMPLATE_ID,
 };
 

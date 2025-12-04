@@ -30,7 +30,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { FileAttachment } from "@/ipc/ipc_types";
 import { NEON_TEMPLATE_IDS } from "@/shared/templates";
 import { neonTemplateHook } from "@/client_logic/template_hook";
-import { ProBanner } from "@/components/ProBanner";
 
 // Adding an export for attachments
 export interface HomeSubmitOptions {
@@ -245,7 +244,7 @@ export default function HomePage() {
             </span>
           </button>
         </div>
-        <ProBanner />
+
       </div>
 
       {/* Release Notes Dialog */}
