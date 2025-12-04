@@ -42,7 +42,7 @@ describe("readSettings", () => {
   describe("when settings file does not exist", () => {
     it("should create default settings file and return default settings", () => {
       mockFs.existsSync.mockReturnValue(false);
-      mockFs.writeFileSync.mockImplementation(() => { });
+      mockFs.writeFileSync.mockImplementation(() => {});
 
       const result = readSettings();
 

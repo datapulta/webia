@@ -281,8 +281,8 @@ export function hasDyadProKey(settings: UserSettings): boolean {
 export function isTurboEditsV2Enabled(settings: UserSettings): boolean {
   return Boolean(
     isDyadProEnabled(settings) &&
-    settings.enableProLazyEditsMode === true &&
-    settings.proLazyEditsMode === "v2",
+      settings.enableProLazyEditsMode === true &&
+      settings.proLazyEditsMode === "v2",
   );
 }
 

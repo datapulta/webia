@@ -333,8 +333,6 @@ export function SetupBanner() {
                 />
               </div>
 
-
-
               <div
                 className="mt-2 p-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/70 transition-colors"
                 onClick={handleOtherProvidersClick}

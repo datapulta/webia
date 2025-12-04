@@ -244,7 +244,6 @@ export default function HomePage() {
             </span>
           </button>
         </div>
-
       </div>
 
       {/* Release Notes Dialog */}
