@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import { mcpServers } from "../../db/schema";
-// import { experimental_createMCPClient, experimental_MCPClient } from "ai";
+import { experimental_createMCPClient, experimental_MCPClient } from "ai";
 import { eq } from "drizzle-orm";
 
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
@@ -13,13 +13,9 @@ class McpManager {
     return this._instance;
   }
 
-  // private clients = new Map<number, experimental_MCPClient>();
-  private clients = new Map<number, any>();
+  private clients = new Map<number, experimental_MCPClient>();
 
-  // async getClient(serverId: number): Promise<experimental_MCPClient> {
-  async getClient(serverId: number): Promise<any> {
-    throw new Error("MCP is temporarily disabled due to dependency issues");
-    /*
+  async getClient(serverId: number): Promise<experimental_MCPClient> {
     const existing = this.clients.get(serverId);
     if (existing) return existing;
     const server = await db
@@ -49,13 +45,12 @@ class McpManager {
     });
     this.clients.set(serverId, client);
     return client;
-    */
   }
 
   dispose(serverId: number) {
     const c = this.clients.get(serverId);
     if (c) {
-      if (typeof c.close === "function") c.close();
+      c.close();
       this.clients.delete(serverId);
     }
   }

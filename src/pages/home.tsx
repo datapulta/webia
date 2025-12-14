@@ -11,8 +11,8 @@ import { isPreviewOpenAtom } from "@/atoms/viewAtoms";
 import { useState, useEffect, useCallback } from "react";
 import { useStreamChat } from "@/hooks/useStreamChat";
 import { HomeChatInput } from "@/components/chat/HomeChatInput";
-
-
+import { usePostHog } from "posthog-js/react";
+import { PrivacyBanner } from "@/components/TelemetryBanner";
 import { INSPIRATION_PROMPTS } from "@/prompts/inspiration_prompts";
 import { useAppVersion } from "@/hooks/useAppVersion";
 import {
@@ -32,7 +32,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import type { FileAttachment } from "@/ipc/ipc_types";
 import { NEON_TEMPLATE_IDS } from "@/shared/templates";
 import { neonTemplateHook } from "@/client_logic/template_hook";
-
+import { ProBanner } from "@/components/ProBanner";
 
 // Adding an export for attachments
 export interface HomeSubmitOptions {
@@ -49,7 +49,7 @@ export default function HomePage() {
   const setIsPreviewOpen = useSetAtom(isPreviewOpenAtom);
   const [isLoading, setIsLoading] = useState(false);
   const { streamMessage } = useStreamChat({ hasChatId: false });
-
+  const posthog = usePostHog();
   const appVersion = useAppVersion();
   const [releaseNotesOpen, setReleaseNotesOpen] = useState(false);
   const [releaseUrl, setReleaseUrl] = useState("");
@@ -154,7 +154,7 @@ export default function HomePage() {
       setIsPreviewOpen(false);
       await refreshApps(); // Ensure refreshApps is awaited if it's async
       await invalidateAppQuery(queryClient, { appId: result.app.id });
-
+      posthog.capture("home:chat-submit");
       navigate({ to: "/chat", search: { id: result.chatId } });
     } catch (error) {
       console.error("Failed to create chat:", error);
@@ -249,9 +249,9 @@ export default function HomePage() {
             </span>
           </button>
         </div>
-
+        <ProBanner />
       </div>
-
+      <PrivacyBanner />
 
       {/* Release Notes Dialog */}
       <Dialog open={releaseNotesOpen} onOpenChange={setReleaseNotesOpen}>

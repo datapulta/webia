@@ -102,11 +102,11 @@ async function getSystemDebugInfo({
     nodeVersion,
     pnpmVersion,
     nodePath,
-    telemetryId: "",
+    telemetryId,
     selectedLanguageModel:
       serializeModelForDebug(settings.selectedModel) || "unknown",
-    telemetryConsent: "opted_out",
-    telemetryUrl: "", // Hardcoded from renderer.tsx
+    telemetryConsent: settings.telemetryConsent || "unknown",
+    telemetryUrl: "https://us.i.posthog.com", // Hardcoded from renderer.tsx
     dyadVersion,
     platform: process.platform,
     architecture: arch(),

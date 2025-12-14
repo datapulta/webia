@@ -277,18 +277,18 @@ export const UserSettingsSchema = z.object({
 export type UserSettings = z.infer<typeof UserSettingsSchema>;
 
 export function isDyadProEnabled(settings: UserSettings): boolean {
-  return true;
+  return settings.enableDyadPro === true && hasDyadProKey(settings);
 }
 
 export function hasDyadProKey(settings: UserSettings): boolean {
-  return true;
+  return !!settings.providerSettings?.auto?.apiKey?.value;
 }
 
 export function isTurboEditsV2Enabled(settings: UserSettings): boolean {
   return Boolean(
     isDyadProEnabled(settings) &&
-    settings.enableProLazyEditsMode === true &&
-    settings.proLazyEditsMode === "v2",
+      settings.enableProLazyEditsMode === true &&
+      settings.proLazyEditsMode === "v2",
   );
 }
 

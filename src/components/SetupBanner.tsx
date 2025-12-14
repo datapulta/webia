@@ -25,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NodeSystemInfo } from "@/ipc/ipc_types";
-
+import { usePostHog } from "posthog-js/react";
 import { useLanguageModelProviders } from "@/hooks/useLanguageModelProviders";
 import { useScrollAndNavigateTo } from "@/hooks/useScrollAndNavigateTo";
 // @ts-ignore
@@ -41,7 +41,7 @@ type NodeInstallStep =
   | "finished-checking";
 
 export function SetupBanner() {
-
+  const posthog = usePostHog();
   const navigate = useNavigate();
   const [isOnboardingVisible, setIsOnboardingVisible] = useState(true);
   const { isAnyProviderSetup, isLoading: loading } =
@@ -100,7 +100,7 @@ export function SetupBanner() {
   });
 
   const handleGoogleSetupClick = () => {
-
+    posthog.capture("setup-flow:ai-provider-setup:google:click");
     navigate({
       to: providerSettingsRoute.id,
       params: { provider: "google" },
@@ -108,32 +108,32 @@ export function SetupBanner() {
   };
 
   const handleOpenRouterSetupClick = () => {
-
+    posthog.capture("setup-flow:ai-provider-setup:openrouter:click");
     navigate({
       to: providerSettingsRoute.id,
       params: { provider: "openrouter" },
     });
   };
   const handleDyadProSetupClick = () => {
-
+    posthog.capture("setup-flow:ai-provider-setup:dyad:click");
     IpcClient.getInstance().openExternalUrl(
       "https://www.dyad.sh/pro?utm_source=dyad-app&utm_medium=app&utm_campaign=setup-banner",
     );
   };
 
   const handleOtherProvidersClick = () => {
-
+    posthog.capture("setup-flow:ai-provider-setup:other:click");
     settingsScrollAndNavigateTo("provider-settings");
   };
 
   const handleNodeInstallClick = useCallback(async () => {
-
+    posthog.capture("setup-flow:start-node-install-click");
     setNodeInstallStep("waiting-for-continue");
     IpcClient.getInstance().openExternalUrl(nodeSystemInfo!.nodeDownloadUrl);
   }, [nodeSystemInfo, setNodeInstallStep]);
 
   const finishNodeInstall = useCallback(async () => {
-
+    posthog.capture("setup-flow:continue-node-install-click");
     setNodeInstallStep("continue-processing");
     await IpcClient.getInstance().reloadEnvPath();
     await checkNode();
@@ -341,7 +341,18 @@ export function SetupBanner() {
                 />
               </div>
 
-
+              <SetupProviderCard
+                className="mt-2"
+                variant="dyad"
+                onClick={handleDyadProSetupClick}
+                tabIndex={isNodeSetupComplete ? 0 : -1}
+                leadingIcon={
+                  <img src={logo} alt="Dyad Logo" className="w-6 h-6 mr-0.5" />
+                }
+                title="Setup Dyad Pro"
+                subtitle="Access all AI models with one plan"
+                chip={<>Recommended</>}
+              />
 
               <div
                 className="mt-2 p-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/70 transition-colors"
@@ -448,14 +459,14 @@ export const OpenRouterSetupBanner = ({
 }: {
   className?: string;
 }) => {
-
+  const posthog = usePostHog();
   const navigate = useNavigate();
   return (
     <SetupProviderCard
       className={cn("mt-2", className)}
       variant="openrouter"
       onClick={() => {
-
+        posthog.capture("setup-flow:ai-provider-setup:openrouter:click");
         navigate({
           to: providerSettingsRoute.id,
           params: { provider: "openrouter" },
