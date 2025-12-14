@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { NodeSystemInfo } from "@/ipc/ipc_types";
+
 import { useLanguageModelProviders } from "@/hooks/useLanguageModelProviders";
 import { useScrollAndNavigateTo } from "@/hooks/useScrollAndNavigateTo";
 // @ts-ignore
@@ -40,6 +41,7 @@ type NodeInstallStep =
   | "finished-checking";
 
 export function SetupBanner() {
+
   const navigate = useNavigate();
   const [isOnboardingVisible, setIsOnboardingVisible] = useState(true);
   const { isAnyProviderSetup, isLoading: loading } =
@@ -98,6 +100,7 @@ export function SetupBanner() {
   });
 
   const handleGoogleSetupClick = () => {
+
     navigate({
       to: providerSettingsRoute.id,
       params: { provider: "google" },
@@ -105,27 +108,32 @@ export function SetupBanner() {
   };
 
   const handleOpenRouterSetupClick = () => {
+
     navigate({
       to: providerSettingsRoute.id,
       params: { provider: "openrouter" },
     });
   };
   const handleDyadProSetupClick = () => {
+
     IpcClient.getInstance().openExternalUrl(
       "https://www.dyad.sh/pro?utm_source=dyad-app&utm_medium=app&utm_campaign=setup-banner",
     );
   };
 
   const handleOtherProvidersClick = () => {
+
     settingsScrollAndNavigateTo("provider-settings");
   };
 
   const handleNodeInstallClick = useCallback(async () => {
+
     setNodeInstallStep("waiting-for-continue");
     IpcClient.getInstance().openExternalUrl(nodeSystemInfo!.nodeDownloadUrl);
   }, [nodeSystemInfo, setNodeInstallStep]);
 
   const finishNodeInstall = useCallback(async () => {
+
     setNodeInstallStep("continue-processing");
     await IpcClient.getInstance().reloadEnvPath();
     await checkNode();
@@ -333,6 +341,8 @@ export function SetupBanner() {
                 />
               </div>
 
+
+
               <div
                 className="mt-2 p-3 bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800/70 transition-colors"
                 onClick={handleOtherProvidersClick}
@@ -438,12 +448,14 @@ export const OpenRouterSetupBanner = ({
 }: {
   className?: string;
 }) => {
+
   const navigate = useNavigate();
   return (
     <SetupProviderCard
       className={cn("mt-2", className)}
       variant="openrouter"
       onClick={() => {
+
         navigate({
           to: providerSettingsRoute.id,
           params: { provider: "openrouter" },

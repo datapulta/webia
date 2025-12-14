@@ -23,6 +23,8 @@ const DEFAULT_SETTINGS: UserSettings = {
     provider: "auto",
   },
   providerSettings: {},
+  telemetryConsent: "unset",
+  telemetryUserId: uuidv4(),
   hasRunBefore: false,
   experiments: {},
   enableProLazyEditsMode: true,

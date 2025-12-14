@@ -25,6 +25,7 @@ import { useSearch } from "@tanstack/react-router";
 import { useRunApp } from "./useRunApp";
 import { useCountTokens } from "./useCountTokens";
 import { useUserBudgetInfo } from "./useUserBudgetInfo";
+
 import { useCheckProblems } from "./useCheckProblems";
 import { useSettings } from "./useSettings";
 
@@ -48,11 +49,11 @@ export function useStreamChat({
   const setStreamCountById = useSetAtom(chatStreamCountByIdAtom);
   const { refreshVersions } = useVersions(selectedAppId);
   const { refreshAppIframe } = useRunApp();
-  const { countTokens } = useCountTokens();
   const { refetchUserBudget } = useUserBudgetInfo();
   const { checkProblems } = useCheckProblems(selectedAppId);
   const { settings } = useSettings();
   const setRecentStreamChatIds = useSetAtom(recentStreamChatIdsAtom);
+
   let chatId: number | undefined;
 
   if (hasChatId) {
@@ -60,6 +61,7 @@ export function useStreamChat({
     chatId = id;
   }
   let { refreshProposal } = hasChatId ? useProposal(chatId) : useProposal();
+  const { invalidateTokenCount } = useCountTokens(chatId ?? null, "");
 
   const streamMessage = useCallback(
     async ({
@@ -136,6 +138,7 @@ export function useStreamChat({
               showExtraFilesToast({
                 files: response.extraFiles,
                 error: response.extraFilesError,
+
               });
             }
             refreshProposal(chatId);
@@ -151,7 +154,7 @@ export function useStreamChat({
             refreshChats();
             refreshApp();
             refreshVersions();
-            countTokens(chatId, "");
+            invalidateTokenCount();
             onSettled?.();
           },
           onError: (errorMessage: string) => {
@@ -171,7 +174,7 @@ export function useStreamChat({
             refreshChats();
             refreshApp();
             refreshVersions();
-            countTokens(chatId, "");
+            invalidateTokenCount();
             onSettled?.();
           },
         });

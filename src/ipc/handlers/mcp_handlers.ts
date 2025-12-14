@@ -62,7 +62,7 @@ export function registerMcpHandlers() {
       // If server config changed, dispose cached client to be recreated on next use
       try {
         mcpManager.dispose(params.id);
-      } catch {}
+      } catch { }
       return result[0];
     },
   );
@@ -72,7 +72,7 @@ export function registerMcpHandlers() {
     async (_event: IpcMainInvokeEvent, id: number) => {
       try {
         mcpManager.dispose(id);
-      } catch {}
+      } catch { }
       await db.delete(mcpServers).where(eq(mcpServers.id, id));
       return { success: true };
     },
@@ -91,7 +91,7 @@ export function registerMcpHandlers() {
         const tools = await Promise.all(
           Object.entries(remoteTools).map(async ([name, tool]) => ({
             name,
-            description: tool.description ?? null,
+            description: (tool as any).description ?? null,
             consent: await getStoredConsent(serverId, name),
           })),
         );

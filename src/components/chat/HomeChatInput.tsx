@@ -8,17 +8,18 @@ import { useAttachments } from "@/hooks/useAttachments";
 import { AttachmentsList } from "./AttachmentsList";
 import { DragDropOverlay } from "./DragDropOverlay";
 import { FileAttachmentDropdown } from "./FileAttachmentDropdown";
+
 import { HomeSubmitOptions } from "@/pages/home";
 import { ChatInputControls } from "../ChatInputControls";
 import { LexicalChatInput } from "./LexicalChatInput";
 import { useChatModeToggle } from "@/hooks/useChatModeToggle";
 import { useTypingPlaceholder } from "@/hooks/useTypingPlaceholder";
-
 export function HomeChatInput({
   onSubmit,
 }: {
   onSubmit: (options?: HomeSubmitOptions) => void;
 }) {
+
   const [inputValue, setInputValue] = useAtom(homeChatInputValueAtom);
   const { settings } = useSettings();
   const { isStreaming } = useStreamChat({
@@ -57,6 +58,7 @@ export function HomeChatInput({
 
     // Clear attachments as part of submission process
     clearAttachments();
+
   };
 
   if (!settings) {
@@ -67,9 +69,8 @@ export function HomeChatInput({
     <>
       <div className="p-4" data-testid="home-chat-input-container">
         <div
-          className={`relative flex flex-col space-y-2 border border-border rounded-lg bg-(--background-lighter) shadow-sm ${
-            isDraggingOver ? "ring-2 ring-blue-500 border-blue-500" : ""
-          }`}
+          className={`relative flex flex-col space-y-2 border border-border rounded-lg bg-(--background-lighter) shadow-sm ${isDraggingOver ? "ring-2 ring-blue-500 border-blue-500" : ""
+            }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}

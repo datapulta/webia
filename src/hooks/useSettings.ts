@@ -3,9 +3,24 @@ import { useAtom } from "jotai";
 import { userSettingsAtom, envVarsAtom } from "@/atoms/appAtoms";
 import { IpcClient } from "@/ipc/ipc_client";
 import { type UserSettings } from "@/lib/schemas";
+
 import { useAppVersion } from "./useAppVersion";
 
+const TELEMETRY_CONSENT_KEY = "dyadTelemetryConsent";
+const TELEMETRY_USER_ID_KEY = "dyadTelemetryUserId";
+
+export function isTelemetryOptedIn() {
+  return false;
+}
+
+export function getTelemetryUserId(): string | null {
+  return null;
+}
+
+let isInitialLoad = false;
+
 export function useSettings() {
+
   const [settings, setSettingsAtom] = useAtom(userSettingsAtom);
   const [envVars, setEnvVarsAtom] = useAtom(envVarsAtom);
   const [loading, setLoading] = useState(true);
@@ -20,6 +35,8 @@ export function useSettings() {
         ipcClient.getUserSettings(),
         ipcClient.getEnvVars(),
       ]);
+      processSettingsForTelemetry(userSettings);
+
       setSettingsAtom(userSettings);
       setEnvVarsAtom(fetchedEnvVars);
       setError(null);
@@ -42,6 +59,7 @@ export function useSettings() {
       const ipcClient = IpcClient.getInstance();
       const updatedSettings = await ipcClient.setUserSettings(newSettings);
       setSettingsAtom(updatedSettings);
+      processSettingsForTelemetry(updatedSettings);
 
       setError(null);
       return updatedSettings;
@@ -65,4 +83,8 @@ export function useSettings() {
       return loadInitialData();
     },
   };
+}
+
+function processSettingsForTelemetry(settings: UserSettings) {
+  // No-op: Telemetry removed
 }

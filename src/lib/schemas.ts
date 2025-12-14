@@ -214,6 +214,12 @@ export type ReleaseChannel = z.infer<typeof ReleaseChannelSchema>;
 export const ZoomLevelSchema = z.enum(["90", "100", "110", "125", "150"]);
 export type ZoomLevel = z.infer<typeof ZoomLevelSchema>;
 
+export const SmartContextModeSchema = z.enum([
+  "balanced",
+  "conservative",
+  "deep",
+]);
+export type SmartContextMode = z.infer<typeof SmartContextModeSchema>;
 /**
  * Zod schema for user settings
  */
@@ -226,6 +232,8 @@ export const UserSettingsSchema = z.object({
   supabase: SupabaseSchema.optional(),
   neon: NeonSchema.optional(),
   autoApproveChanges: z.boolean().optional(),
+  telemetryConsent: z.enum(["opted_in", "opted_out", "unset"]).optional(),
+  telemetryUserId: z.string().optional(),
   hasRunBefore: z.boolean().optional(),
   enableDyadPro: z.boolean().optional(),
   experiments: ExperimentsSchema.optional(),
@@ -236,9 +244,7 @@ export const UserSettingsSchema = z.object({
   proLazyEditsMode: z.enum(["off", "v1", "v2"]).optional(),
   enableProSmartFilesContextMode: z.boolean().optional(),
   enableProWebSearch: z.boolean().optional(),
-  proSmartContextOption: z
-    .enum(["balanced", "conservative", "deep"])
-    .optional(),
+  proSmartContextOption: SmartContextModeSchema.optional(),
   selectedTemplateId: z.string(),
   enableSupabaseWriteSqlMigration: z.boolean().optional(),
   selectedChatMode: ChatModeSchema.optional(),
@@ -281,8 +287,8 @@ export function hasDyadProKey(settings: UserSettings): boolean {
 export function isTurboEditsV2Enabled(settings: UserSettings): boolean {
   return Boolean(
     isDyadProEnabled(settings) &&
-      settings.enableProLazyEditsMode === true &&
-      settings.proLazyEditsMode === "v2",
+    settings.enableProLazyEditsMode === true &&
+    settings.proLazyEditsMode === "v2",
   );
 }
 

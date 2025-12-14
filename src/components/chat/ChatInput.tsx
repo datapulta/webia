@@ -43,6 +43,7 @@ import {
 import { isPreviewOpenAtom } from "@/atoms/viewAtoms";
 import { useRunApp } from "@/hooks/useRunApp";
 import { AutoApproveSwitch } from "../AutoApproveSwitch";
+
 import { CodeHighlight } from "./CodeHighlight";
 import { TokenBar } from "./TokenBar";
 import {
@@ -51,13 +52,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { useNavigate } from "@tanstack/react-router";
+
 import { useVersions } from "@/hooks/useVersions";
 import { useAttachments } from "@/hooks/useAttachments";
 import { AttachmentsList } from "./AttachmentsList";
 import { DragDropOverlay } from "./DragDropOverlay";
 import { FileAttachmentDropdown } from "./FileAttachmentDropdown";
-import { showError, showExtraFilesToast } from "@/lib/toast";
+import { showExtraFilesToast } from "@/lib/toast";
+import { useSummarizeInNewChat } from "./SummarizeInNewChatButton";
 import { ChatInputControls } from "../ChatInputControls";
 import { ChatErrorBox } from "./ChatErrorBox";
 import {
@@ -72,6 +74,7 @@ import { useChatModeToggle } from "@/hooks/useChatModeToggle";
 const showTokenBarAtom = atom(false);
 
 export function ChatInput({ chatId }: { chatId?: number }) {
+
   const [inputValue, setInputValue] = useAtom(chatInputValueAtom);
   const { settings } = useSettings();
   const appId = useAtomValue(selectedAppIdAtom);
@@ -175,6 +178,7 @@ export function ChatInput({ chatId }: { chatId?: number }) {
       selectedComponents: componentsToSend,
     });
     clearAttachments();
+
   };
 
   const handleCancel = () => {
@@ -195,6 +199,7 @@ export function ChatInput({ chatId }: { chatId?: number }) {
       `Approving proposal for chatId: ${chatId}, messageId: ${messageId}`,
     );
     setIsApproving(true);
+
     try {
       const result = await IpcClient.getInstance().approveProposal({
         chatId,
@@ -204,6 +209,7 @@ export function ChatInput({ chatId }: { chatId?: number }) {
         showExtraFilesToast({
           files: result.extraFiles,
           error: result.extraFilesError,
+
         });
       }
     } catch (err) {
@@ -230,6 +236,7 @@ export function ChatInput({ chatId }: { chatId?: number }) {
       `Rejecting proposal for chatId: ${chatId}, messageId: ${messageId}`,
     );
     setIsRejecting(true);
+
     try {
       await IpcClient.getInstance().rejectProposal({
         chatId,
@@ -272,9 +279,8 @@ export function ChatInput({ chatId }: { chatId?: number }) {
       )}
       <div className="p-4" data-testid="chat-input-container">
         <div
-          className={`relative flex flex-col border border-border rounded-lg bg-(--background-lighter) shadow-sm ${
-            isDraggingOver ? "ring-2 ring-blue-500 border-blue-500" : ""
-          }`}
+          className={`relative flex flex-col border border-border rounded-lg bg-(--background-lighter) shadow-sm ${isDraggingOver ? "ring-2 ring-blue-500 border-blue-500" : ""
+            }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -360,9 +366,8 @@ export function ChatInput({ chatId }: { chatId?: number }) {
                   <Button
                     onClick={() => setShowTokenBar(!showTokenBar)}
                     variant="ghost"
-                    className={`has-[>svg]:px-2 ${
-                      showTokenBar ? "text-purple-500 bg-purple-100" : ""
-                    }`}
+                    className={`has-[>svg]:px-2 ${showTokenBar ? "text-purple-500 bg-purple-100" : ""
+                      }`}
                     size="sm"
                     data-testid="token-bar-toggle"
                   >
@@ -413,30 +418,10 @@ function SuggestionButton({
 }
 
 function SummarizeInNewChatButton() {
-  const chatId = useAtomValue(selectedChatIdAtom);
-  const appId = useAtomValue(selectedAppIdAtom);
-  const { streamMessage } = useStreamChat();
-  const navigate = useNavigate();
-  const onClick = async () => {
-    if (!appId) {
-      console.error("No app id found");
-      return;
-    }
-    try {
-      const newChatId = await IpcClient.getInstance().createChat(appId);
-      // navigate to new chat
-      await navigate({ to: "/chat", search: { id: newChatId } });
-      await streamMessage({
-        prompt: "Summarize from chat-id=" + chatId,
-        chatId: newChatId,
-      });
-    } catch (err) {
-      showError(err);
-    }
-  };
+  const { handleSummarize } = useSummarizeInNewChat();
   return (
     <SuggestionButton
-      onClick={onClick}
+      onClick={handleSummarize}
       tooltipText="Creating a new chat makes the AI more focused and efficient"
     >
       Summarize to new chat
@@ -496,6 +481,7 @@ function WriteCodeProperlyButton() {
 
 function RebuildButton() {
   const { restartApp } = useRunApp();
+
   const selectedAppId = useAtomValue(selectedAppIdAtom);
 
   const onClick = useCallback(async () => {
@@ -513,6 +499,7 @@ function RebuildButton() {
 
 function RestartButton() {
   const { restartApp } = useRunApp();
+
   const selectedAppId = useAtomValue(selectedAppIdAtom);
 
   const onClick = useCallback(async () => {
@@ -533,6 +520,7 @@ function RestartButton() {
 
 function RefreshButton() {
   const { refreshAppIframe } = useRunApp();
+
 
   const onClick = useCallback(() => {
     refreshAppIframe();
@@ -885,24 +873,21 @@ function ProposalSummary({
 
   if (sqlQueries.length) {
     parts.push(
-      `${sqlQueries.length} SQL ${
-        sqlQueries.length === 1 ? "query" : "queries"
+      `${sqlQueries.length} SQL ${sqlQueries.length === 1 ? "query" : "queries"
       }`,
     );
   }
 
   if (serverFunctions.length) {
     parts.push(
-      `${serverFunctions.length} Server ${
-        serverFunctions.length === 1 ? "Function" : "Functions"
+      `${serverFunctions.length} Server ${serverFunctions.length === 1 ? "Function" : "Functions"
       }`,
     );
   }
 
   if (packagesAdded.length) {
     parts.push(
-      `${packagesAdded.length} ${
-        packagesAdded.length === 1 ? "package" : "packages"
+      `${packagesAdded.length} ${packagesAdded.length === 1 ? "package" : "packages"
       }`,
     );
   }

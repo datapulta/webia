@@ -61,6 +61,10 @@ async function getSystemDebugInfo({
     console.error("Failed to read package.json:", err);
   }
 
+  // Get telemetry info from settings
+  const settings = readSettings();
+  const telemetryId = settings.telemetryUserId || "unknown";
+
   // Get logs from electron-log
   let logs = "";
   try {
@@ -94,15 +98,15 @@ async function getSystemDebugInfo({
     logs = `Error reading logs: ${err}`;
   }
 
-  // Get settings to include selected model
-  const settings = readSettings();
-
   return {
     nodeVersion,
     pnpmVersion,
     nodePath,
+    telemetryId: "",
     selectedLanguageModel:
       serializeModelForDebug(settings.selectedModel) || "unknown",
+    telemetryConsent: "opted_out",
+    telemetryUrl: "", // Hardcoded from renderer.tsx
     dyadVersion,
     platform: process.platform,
     architecture: arch(),

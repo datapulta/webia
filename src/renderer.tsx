@@ -2,6 +2,8 @@ import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { router } from "./router";
 import { RouterProvider } from "@tanstack/react-router";
+
+
 import {
   QueryCache,
   QueryClient,
@@ -50,7 +52,11 @@ const queryClient = new QueryClient({
   }),
 });
 
+
+
 function App() {
+
+
   useEffect(() => {
     const ipc = IpcClient.getInstance();
     const unsubscribe = ipc.onMcpToolConsentRequest((payload) => {

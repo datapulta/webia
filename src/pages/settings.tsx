@@ -5,6 +5,7 @@ import ConfirmationDialog from "@/components/ConfirmationDialog";
 import { IpcClient } from "@/ipc/ipc_client";
 import { showSuccess, showError } from "@/lib/toast";
 import { AutoApproveSwitch } from "@/components/AutoApproveSwitch";
+
 import { MaxChatTurnsSelector } from "@/components/MaxChatTurnsSelector";
 import { ThinkingBudgetSelector } from "@/components/ThinkingBudgetSelector";
 import { useSettings } from "@/hooks/useSettings";
@@ -87,6 +88,8 @@ export default function SettingsPage() {
           >
             <ProviderSettingsGrid />
           </div>
+
+
 
           {/* Integrations Section */}
           <div
@@ -227,11 +230,10 @@ export function GeneralSettings({ appVersion }: { appVersion: string | null }) {
                 className={`
                 px-4 py-1.5 text-sm font-medium rounded-md
                 transition-all duration-200
-                ${
-                  theme === option
+                ${theme === option
                     ? "bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm"
                     : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                }
+                  }
               `}
               >
                 {option.charAt(0).toUpperCase() + option.slice(1)}

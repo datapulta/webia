@@ -103,6 +103,7 @@ Issues that do not meet these requirements will be closed and may need to be res
 - Node Version: ${debugInfo.nodeVersion || "n/a"}
 - PNPM Version: ${debugInfo.pnpmVersion || "n/a"}
 - Node Path: ${debugInfo.nodePath || "n/a"}
+
 - Model: ${debugInfo.selectedLanguageModel || "n/a"}
 
 ## Logs
