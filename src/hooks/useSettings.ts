@@ -3,24 +3,24 @@ import { useAtom } from "jotai";
 import { userSettingsAtom, envVarsAtom } from "@/atoms/appAtoms";
 import { IpcClient } from "@/ipc/ipc_client";
 import { type UserSettings } from "@/lib/schemas";
-import { usePostHog } from "posthog-js/react";
+
 import { useAppVersion } from "./useAppVersion";
 
 const TELEMETRY_CONSENT_KEY = "dyadTelemetryConsent";
 const TELEMETRY_USER_ID_KEY = "dyadTelemetryUserId";
 
 export function isTelemetryOptedIn() {
-  return window.localStorage.getItem(TELEMETRY_CONSENT_KEY) === "opted_in";
+  return false;
 }
 
 export function getTelemetryUserId(): string | null {
-  return window.localStorage.getItem(TELEMETRY_USER_ID_KEY);
+  return null;
 }
 
 let isInitialLoad = false;
 
 export function useSettings() {
-  const posthog = usePostHog();
+
   const [settings, setSettingsAtom] = useAtom(userSettingsAtom);
   const [envVars, setEnvVarsAtom] = useAtom(envVarsAtom);
   const [loading, setLoading] = useState(true);
@@ -37,10 +37,7 @@ export function useSettings() {
       ]);
       processSettingsForTelemetry(userSettings);
       if (!isInitialLoad && appVersion) {
-        posthog.capture("app:initial-load", {
-          isPro: Boolean(userSettings.providerSettings?.auto?.apiKey?.value),
-          appVersion,
-        });
+        // Telemetry removed
         isInitialLoad = true;
       }
       setSettingsAtom(userSettings);
@@ -92,20 +89,5 @@ export function useSettings() {
 }
 
 function processSettingsForTelemetry(settings: UserSettings) {
-  if (settings.telemetryConsent) {
-    window.localStorage.setItem(
-      TELEMETRY_CONSENT_KEY,
-      settings.telemetryConsent,
-    );
-  } else {
-    window.localStorage.removeItem(TELEMETRY_CONSENT_KEY);
-  }
-  if (settings.telemetryUserId) {
-    window.localStorage.setItem(
-      TELEMETRY_USER_ID_KEY,
-      settings.telemetryUserId,
-    );
-  } else {
-    window.localStorage.removeItem(TELEMETRY_USER_ID_KEY);
-  }
+  // Telemetry removed
 }

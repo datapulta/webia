@@ -44,7 +44,7 @@ import {
 import { isPreviewOpenAtom } from "@/atoms/viewAtoms";
 import { useRunApp } from "@/hooks/useRunApp";
 import { AutoApproveSwitch } from "../AutoApproveSwitch";
-import { usePostHog } from "posthog-js/react";
+
 import { CodeHighlight } from "./CodeHighlight";
 import { TokenBar } from "./TokenBar";
 import {
@@ -80,7 +80,6 @@ import { useUserBudgetInfo } from "@/hooks/useUserBudgetInfo";
 const showTokenBarAtom = atom(false);
 
 export function ChatInput({ chatId }: { chatId?: number }) {
-  const posthog = usePostHog();
   const [inputValue, setInputValue] = useAtom(chatInputValueAtom);
   const { settings } = useSettings();
   const appId = useAtomValue(selectedAppIdAtom);
@@ -194,7 +193,6 @@ export function ChatInput({ chatId }: { chatId?: number }) {
       selectedComponents: componentsToSend,
     });
     clearAttachments();
-    posthog.capture("chat:submit");
   };
 
   const handleCancel = () => {
@@ -215,7 +213,6 @@ export function ChatInput({ chatId }: { chatId?: number }) {
       `Approving proposal for chatId: ${chatId}, messageId: ${messageId}`,
     );
     setIsApproving(true);
-    posthog.capture("chat:approve");
     try {
       const result = await IpcClient.getInstance().approveProposal({
         chatId,
@@ -225,7 +222,6 @@ export function ChatInput({ chatId }: { chatId?: number }) {
         showExtraFilesToast({
           files: result.extraFiles,
           error: result.extraFilesError,
-          posthog,
         });
       }
     } catch (err) {
@@ -252,7 +248,6 @@ export function ChatInput({ chatId }: { chatId?: number }) {
       `Rejecting proposal for chatId: ${chatId}, messageId: ${messageId}`,
     );
     setIsRejecting(true);
-    posthog.capture("chat:reject");
     try {
       await IpcClient.getInstance().rejectProposal({
         chatId,
@@ -295,9 +290,8 @@ export function ChatInput({ chatId }: { chatId?: number }) {
       )}
       <div className="p-4" data-testid="chat-input-container">
         <div
-          className={`relative flex flex-col border border-border rounded-lg bg-(--background-lighter) shadow-sm ${
-            isDraggingOver ? "ring-2 ring-blue-500 border-blue-500" : ""
-          }`}
+          className={`relative flex flex-col border border-border rounded-lg bg-(--background-lighter) shadow-sm ${isDraggingOver ? "ring-2 ring-blue-500 border-blue-500" : ""
+            }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -323,7 +317,7 @@ export function ChatInput({ chatId }: { chatId?: number }) {
               />
             )}
 
-          {userBudget ? (
+          {true ? (
             <VisualEditingChangesDialog
               iframeRef={
                 previewIframeRef
@@ -435,9 +429,8 @@ export function ChatInput({ chatId }: { chatId?: number }) {
                   <Button
                     onClick={() => setShowTokenBar(!showTokenBar)}
                     variant="ghost"
-                    className={`has-[>svg]:px-2 ${
-                      showTokenBar ? "text-purple-500 bg-purple-100" : ""
-                    }`}
+                    className={`has-[>svg]:px-2 ${showTokenBar ? "text-purple-500 bg-purple-100" : ""
+                      }`}
                     size="sm"
                     data-testid="token-bar-toggle"
                   >
@@ -551,15 +544,13 @@ function WriteCodeProperlyButton() {
 
 function RebuildButton() {
   const { restartApp } = useRunApp();
-  const posthog = usePostHog();
   const selectedAppId = useAtomValue(selectedAppIdAtom);
 
   const onClick = useCallback(async () => {
     if (!selectedAppId) return;
 
-    posthog.capture("action:rebuild");
     await restartApp({ removeNodeModules: true });
-  }, [selectedAppId, posthog, restartApp]);
+  }, [selectedAppId, restartApp]);
 
   return (
     <SuggestionButton onClick={onClick} tooltipText="Rebuild the application">
@@ -570,15 +561,13 @@ function RebuildButton() {
 
 function RestartButton() {
   const { restartApp } = useRunApp();
-  const posthog = usePostHog();
   const selectedAppId = useAtomValue(selectedAppIdAtom);
 
   const onClick = useCallback(async () => {
     if (!selectedAppId) return;
 
-    posthog.capture("action:restart");
     await restartApp();
-  }, [selectedAppId, posthog, restartApp]);
+  }, [selectedAppId, restartApp]);
 
   return (
     <SuggestionButton
@@ -592,12 +581,10 @@ function RestartButton() {
 
 function RefreshButton() {
   const { refreshAppIframe } = useRunApp();
-  const posthog = usePostHog();
 
   const onClick = useCallback(() => {
-    posthog.capture("action:refresh");
     refreshAppIframe();
-  }, [posthog, refreshAppIframe]);
+  }, [refreshAppIframe]);
 
   return (
     <SuggestionButton
@@ -946,24 +933,21 @@ function ProposalSummary({
 
   if (sqlQueries.length) {
     parts.push(
-      `${sqlQueries.length} SQL ${
-        sqlQueries.length === 1 ? "query" : "queries"
+      `${sqlQueries.length} SQL ${sqlQueries.length === 1 ? "query" : "queries"
       }`,
     );
   }
 
   if (serverFunctions.length) {
     parts.push(
-      `${serverFunctions.length} Server ${
-        serverFunctions.length === 1 ? "Function" : "Functions"
+      `${serverFunctions.length} Server ${serverFunctions.length === 1 ? "Function" : "Functions"
       }`,
     );
   }
 
   if (packagesAdded.length) {
     parts.push(
-      `${packagesAdded.length} ${
-        packagesAdded.length === 1 ? "package" : "packages"
+      `${packagesAdded.length} ${packagesAdded.length === 1 ? "package" : "packages"
       }`,
     );
   }

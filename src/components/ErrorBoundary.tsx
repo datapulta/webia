@@ -2,16 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LightbulbIcon } from "lucide-react";
 import { ErrorComponentProps } from "@tanstack/react-router";
-import { usePostHog } from "posthog-js/react";
+
 import { IpcClient } from "@/ipc/ipc_client";
 
 export function ErrorBoundary({ error }: ErrorComponentProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const posthog = usePostHog();
+
 
   useEffect(() => {
     console.error("An error occurred in the route:", error);
-    posthog.captureException(error);
+
   }, [error]);
 
   const handleReportBug = async () => {
@@ -46,7 +46,7 @@ ${error?.stack ? `\n\`\`\`\n${error.stack.slice(0, 1000)}\n\`\`\`` : ""}
 - Node Version: ${debugInfo.nodeVersion || "Not available"}
 - PNPM Version: ${debugInfo.pnpmVersion || "Not available"}
 - Node Path: ${debugInfo.nodePath || "Not available"}
-- Telemetry ID: ${debugInfo.telemetryId || "Not available"}
+
 
 ## Logs
 \`\`\`

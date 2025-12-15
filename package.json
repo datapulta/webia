@@ -1,6 +1,6 @@
 {
-  "name": "dyad",
-  "productName": "dyad",
+  "name": "webia",
+  "productName": "webia",
   "version": "0.30.0-beta.1",
   "description": "Free, local, open-source AI app builder",
   "main": ".vite/build/main.js",
@@ -153,7 +153,6 @@
     "lucide-react": "^0.487.0",
     "monaco-editor": "^0.52.2",
     "openai": "^4.91.1",
-    "posthog-js": "^1.236.3",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-markdown": "^10.1.0",

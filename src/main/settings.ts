@@ -27,6 +27,7 @@ const DEFAULT_SETTINGS: UserSettings = {
   telemetryUserId: uuidv4(),
   hasRunBefore: false,
   experiments: {},
+  enableDyadPro: true,
   enableProLazyEditsMode: true,
   enableProSmartFilesContextMode: true,
   selectedChatMode: "build",

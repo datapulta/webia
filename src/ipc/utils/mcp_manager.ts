@@ -1,6 +1,6 @@
 import { db } from "../../db";
 import { mcpServers } from "../../db/schema";
-import { experimental_createMCPClient, experimental_MCPClient } from "ai";
+// import { experimental_createMCPClient, experimental_MCPClient } from "ai";
 import { eq } from "drizzle-orm";
 
 import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
@@ -13,38 +13,10 @@ class McpManager {
     return this._instance;
   }
 
-  private clients = new Map<number, experimental_MCPClient>();
+  private clients = new Map<number, any>();
 
-  async getClient(serverId: number): Promise<experimental_MCPClient> {
-    const existing = this.clients.get(serverId);
-    if (existing) return existing;
-    const server = await db
-      .select()
-      .from(mcpServers)
-      .where(eq(mcpServers.id, serverId));
-    const s = server.find((x) => x.id === serverId);
-    if (!s) throw new Error(`MCP server not found: ${serverId}`);
-    let transport: StdioClientTransport | StreamableHTTPClientTransport;
-    if (s.transport === "stdio") {
-      const args = s.args ?? [];
-      const env = s.envJson ?? undefined;
-      if (!s.command) throw new Error("MCP server command is required");
-      transport = new StdioClientTransport({
-        command: s.command,
-        args,
-        env,
-      });
-    } else if (s.transport === "http") {
-      if (!s.url) throw new Error("HTTP MCP requires url");
-      transport = new StreamableHTTPClientTransport(new URL(s.url as string));
-    } else {
-      throw new Error(`Unsupported MCP transport: ${s.transport}`);
-    }
-    const client = await experimental_createMCPClient({
-      transport,
-    });
-    this.clients.set(serverId, client);
-    return client;
+  async getClient(serverId: number): Promise<any> {
+    throw new Error("MCP is temporarily disabled due to dependency issues");
   }
 
   dispose(serverId: number) {
