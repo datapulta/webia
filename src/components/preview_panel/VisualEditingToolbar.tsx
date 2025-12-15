@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Move, Square, Palette, Type } from "lucide-react";
+import { X, Move, Square, Palette, Type, Layout } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { ComponentSelection } from "@/ipc/ipc_types";
 import { useSetAtom, useAtomValue } from "jotai";
@@ -84,6 +84,13 @@ export function VisualEditingToolbar({
     fontFamily: "",
     color: "#000000",
   });
+  const [currentLayout, setCurrentLayout] = useState({
+    display: "",
+    flexDirection: "",
+    justifyContent: "",
+    alignItems: "",
+    gap: "",
+  });
   const setPendingChanges = useSetAtom(pendingVisualChangesAtom);
   const setSelectedComponentsPreview = useSetAtom(
     selectedComponentsPreviewAtom,
@@ -118,6 +125,13 @@ export function VisualEditingToolbar({
     border?: { width?: string; radius?: string; color?: string };
     backgroundColor?: string;
     text?: { fontSize?: string; fontWeight?: string; color?: string };
+    layout?: {
+      display?: string;
+      flexDirection?: string;
+      justifyContent?: string;
+      alignItems?: string;
+      gap?: string;
+    };
   }) => {
     if (!iframeRef.current?.contentWindow || !selectedComponent) return;
 
@@ -160,6 +174,9 @@ export function VisualEditingToolbar({
       }
       if (styles.text) {
         newStyles.text = { ...existing?.styles?.text, ...styles.text };
+      }
+      if (styles.layout) {
+        newStyles.layout = { ...(existing?.styles as any)?.layout, ...styles.layout };
       }
 
       updated.set(selectedComponent.id, {
@@ -214,7 +231,7 @@ export function VisualEditingToolbar({
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "dyad-component-styles") {
-        const { margin, padding, border, backgroundColor, text } =
+        const { margin, padding, border, backgroundColor, text, layout } =
           event.data.data;
 
         const marginX = margin?.left === margin?.right ? margin.left : "";
@@ -235,6 +252,13 @@ export function VisualEditingToolbar({
           fontWeight: text?.fontWeight || "",
           fontFamily: text?.fontFamily || "",
           color: rgbToHex(text?.color) || "#000000",
+        });
+        setCurrentLayout({
+          display: layout?.display || "",
+          flexDirection: layout?.flexDirection || "",
+          justifyContent: layout?.justifyContent || "",
+          alignItems: layout?.alignItems || "",
+          gap: layout?.gap || "",
         });
       }
     };
@@ -307,6 +331,13 @@ export function VisualEditingToolbar({
     }
   };
 
+  const handleLayoutChange = (property: string, value: string) => {
+    setCurrentLayout((prev) => ({ ...prev, [property]: value }));
+    sendStyleModification({
+      layout: { [property]: value },
+    });
+  };
+
   if (!selectedComponent || !coordinates) return null;
 
   const toolbarTop = coordinates.top + coordinates.height + 4;
@@ -343,6 +374,106 @@ export function VisualEditingToolbar({
         </div>
       ) : (
         <>
+          <StylePopover
+            icon={<Layout size={16} />}
+            title="Layout"
+            tooltip="Layout"
+          >
+            <div className="space-y-2 min-w-[200px]">
+              <div>
+                <Label className="text-xs">Display</Label>
+                <select
+                  className="mt-1 h-8 text-xs w-full rounded-md border border-input bg-background px-3 py-2"
+                  value={currentLayout.display}
+                  onChange={(e) => handleLayoutChange("display", e.target.value)}
+                >
+                  <option value="">Default</option>
+                  <option value="flex">Flex</option>
+                  <option value="grid">Grid</option>
+                  <option value="block">Block</option>
+                  <option value="inline-block">Inline Block</option>
+                  <option value="none">None</option>
+                </select>
+              </div>
+
+              {currentLayout.display === "flex" && (
+                <>
+                  <div>
+                    <Label className="text-xs">Direction</Label>
+                    <div className="flex gap-1 mt-1">
+                      {[
+                        { value: "row", label: "→" },
+                        { value: "column", label: "↓" },
+                        { value: "row-reverse", label: "←" },
+                        { value: "column-reverse", label: "↑" },
+                      ].map((opt) => (
+                        <button
+                          key={opt.value}
+                          className={`flex-1 px-2 py-1 text-xs border rounded ${currentLayout.flexDirection === opt.value
+                            ? "bg-primary text-primary-foreground"
+                            : "hover:bg-accent"
+                            }`}
+                          onClick={() => handleLayoutChange("flexDirection", opt.value)}
+                          title={opt.value}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">Justify Content</Label>
+                    <select
+                      className="mt-1 h-8 text-xs w-full rounded-md border border-input bg-background px-3 py-2"
+                      value={currentLayout.justifyContent}
+                      onChange={(e) =>
+                        handleLayoutChange("justifyContent", e.target.value)
+                      }
+                    >
+                      <option value="">Default</option>
+                      <option value="flex-start">Start</option>
+                      <option value="center">Center</option>
+                      <option value="flex-end">End</option>
+                      <option value="space-between">Space Between</option>
+                      <option value="space-around">Space Around</option>
+                      <option value="space-evenly">Space Evenly</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">Align Items</Label>
+                    <select
+                      className="mt-1 h-8 text-xs w-full rounded-md border border-input bg-background px-3 py-2"
+                      value={currentLayout.alignItems}
+                      onChange={(e) =>
+                        handleLayoutChange("alignItems", e.target.value)
+                      }
+                    >
+                      <option value="">Default</option>
+                      <option value="flex-start">Start</option>
+                      <option value="center">Center</option>
+                      <option value="flex-end">End</option>
+                      <option value="stretch">Stretch</option>
+                      <option value="baseline">Baseline</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <Label className="text-xs">Gap</Label>
+                    <NumberInput
+                      id="layout-gap"
+                      value={currentLayout.gap}
+                      onChange={(v) => handleLayoutChange("gap", v)}
+                      label="Gap"
+                      placeholder="4"
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          </StylePopover>
+
           <StylePopover
             icon={<Move size={16} />}
             title="Margin"

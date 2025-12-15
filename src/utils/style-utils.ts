@@ -19,6 +19,13 @@ interface StyleObject {
     color?: string;
     fontFamily?: string;
   };
+  layout?: {
+    display?: string;
+    flexDirection?: string;
+    justifyContent?: string;
+    alignItems?: string;
+    gap?: string;
+  };
 }
 
 /**
@@ -121,6 +128,60 @@ export function stylesToTailwind(styles: StyleObject): string[] {
       // Replace spaces with underscores for Tailwind arbitrary values
       const fontFamilyValue = styles.text.fontFamily.replace(/\s/g, "_");
       classes.push(`font-[${fontFamilyValue}]`);
+    }
+  }
+  if (styles.layout) {
+    if (styles.layout.display === "flex") {
+      classes.push("flex");
+    } else if (styles.layout.display === "grid") {
+      classes.push("grid");
+    } else if (styles.layout.display === "block") {
+      classes.push("block");
+    } else if (styles.layout.display === "inline-block") {
+      classes.push("inline-block");
+    } else if (styles.layout.display === "none") {
+      classes.push("hidden");
+    }
+
+    if (styles.layout.flexDirection) {
+      if (styles.layout.flexDirection === "row") classes.push("flex-row");
+      else if (styles.layout.flexDirection === "column")
+        classes.push("flex-col");
+      else if (styles.layout.flexDirection === "row-reverse")
+        classes.push("flex-row-reverse");
+      else if (styles.layout.flexDirection === "column-reverse")
+        classes.push("flex-col-reverse");
+    }
+
+    if (styles.layout.justifyContent) {
+      if (styles.layout.justifyContent === "flex-start")
+        classes.push("justify-start");
+      else if (styles.layout.justifyContent === "center")
+        classes.push("justify-center");
+      else if (styles.layout.justifyContent === "flex-end")
+        classes.push("justify-end");
+      else if (styles.layout.justifyContent === "space-between")
+        classes.push("justify-between");
+      else if (styles.layout.justifyContent === "space-around")
+        classes.push("justify-around");
+      else if (styles.layout.justifyContent === "space-evenly")
+        classes.push("justify-evenly");
+    }
+
+    if (styles.layout.alignItems) {
+      if (styles.layout.alignItems === "flex-start")
+        classes.push("items-start");
+      else if (styles.layout.alignItems === "center") classes.push("items-center");
+      else if (styles.layout.alignItems === "flex-end")
+        classes.push("items-end");
+      else if (styles.layout.alignItems === "stretch")
+        classes.push("items-stretch");
+      else if (styles.layout.alignItems === "baseline")
+        classes.push("items-baseline");
+    }
+
+    if (styles.layout.gap !== undefined) {
+      classes.push(`gap-[${styles.layout.gap}]`);
     }
   }
 
