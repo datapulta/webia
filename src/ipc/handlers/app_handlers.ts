@@ -192,8 +192,7 @@ async function executeAppLocalNode({
       .join(", ");
 
     logger.error(
-      `Failed to spawn process for app ${appId}. Command="${command}", CWD="${appPath}", ${details}\nSTDERR:\n${
-        errorOutput || "(empty)"
+      `Failed to spawn process for app ${appId}. Command="${command}", CWD="${appPath}", ${details}\nSTDERR:\n${errorOutput || "(empty)"
       }`,
     );
 
@@ -277,7 +276,7 @@ function listenToProcess({
           onStarted: (proxyUrl) => {
             safeSend(event.sender, "app:output", {
               type: "stdout",
-              message: `[dyad-proxy-server]started=[${proxyUrl}] original=[${urlMatch[1]}]`,
+              message: `[webia-proxy-server]started=[${proxyUrl}] original=[${urlMatch[1]}]`,
               appId,
             });
           },
@@ -332,7 +331,7 @@ async function executeAppInDocker({
   installCommand?: string | null;
   startCommand?: string | null;
 }): Promise<void> {
-  const containerName = `dyad-app-${appId}`;
+  const containerName = `webia-app-${appId}`;
 
   // First, check if Docker is available
   try {
@@ -377,7 +376,7 @@ async function executeAppInDocker({
   }
 
   // Create a Dockerfile in the app directory if it doesn't exist
-  const dockerfilePath = path.join(appPath, "Dockerfile.dyad");
+  const dockerfilePath = path.join(appPath, "Dockerfile.webia");
   if (!fs.existsSync(dockerfilePath)) {
     const dockerfileContent = `FROM node:22-alpine
 
@@ -396,7 +395,7 @@ RUN npm install -g pnpm
   // Build the Docker image
   const buildProcess = spawn(
     "docker",
-    ["build", "-f", "Dockerfile.dyad", "-t", `dyad-app-${appId}`, "."],
+    ["build", "-f", "Dockerfile.webia", "-t", `webia-app-${appId}`, "."],
     {
       cwd: appPath,
       stdio: "pipe",
@@ -435,12 +434,12 @@ RUN npm install -g pnpm
       "-v",
       `${appPath}:/app`,
       "-v",
-      `dyad-pnpm-${appId}:/app/.pnpm-store`,
+      `webia-pnpm-${appId}:/app/.pnpm-store`,
       "-e",
       "PNPM_STORE_PATH=/app/.pnpm-store",
       "-w",
       "/app",
-      `dyad-app-${appId}`,
+      `webia-app-${appId}`,
       "sh",
       "-c",
       getCommand({ appId, installCommand, startCommand }),
@@ -478,8 +477,7 @@ RUN npm install -g pnpm
       .join(", ");
 
     logger.error(
-      `Failed to spawn Docker container for app ${appId}. ${details}\nSTDERR:\n${
-        errorOutput || "(empty)"
+      `Failed to spawn Docker container for app ${appId}. ${details}\nSTDERR:\n${errorOutput || "(empty)"
       }`,
     );
 
@@ -609,7 +607,7 @@ export function registerAppHandlers() {
       // Create initial commit
       const commitHash = await gitCommit({
         path: fullAppPath,
-        message: "Init Dyad app",
+        message: "Init App",
       });
 
       // Update chat with initial commit hash
@@ -673,7 +671,7 @@ export function registerAppHandlers() {
         // Create initial commit
         await gitCommit({
           path: newAppPath,
-          message: "Init Dyad app",
+          message: "Init App",
         });
       }
 
@@ -1037,7 +1035,7 @@ export function registerAppHandlers() {
           );
           throw new Error(
             "Could not store Neon timestamp at current version; database versioning functionality is not working: " +
-              error,
+            error,
           );
         }
       }
