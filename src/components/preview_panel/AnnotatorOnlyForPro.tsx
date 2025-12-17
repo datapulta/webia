@@ -8,7 +8,7 @@ interface AnnotatorOnlyForProProps {
 
 export const AnnotatorOnlyForPro = ({ onGoBack }: AnnotatorOnlyForProProps) => {
   const handleGetPro = () => {
-    IpcClient.getInstance().openExternalUrl("https://dyad.sh/pro");
+    IpcClient.getInstance().openExternalUrl("https://webia.app/pro");
   };
 
   return (
@@ -35,8 +35,7 @@ export const AnnotatorOnlyForPro = ({ onGoBack }: AnnotatorOnlyForProProps) => {
           Annotator is a Pro Feature
         </h2>
         <p className="text-muted-foreground mb-10 text-center max-w-md text-base leading-relaxed">
-          Unlock the ability to annotate screenshots and enhance your workflow
-          with Dyad Pro.
+          Unlock the ability to annotate screenshots and enhance your workflow.
         </p>
 
         {/* Get Pro Button */}
@@ -45,7 +44,7 @@ export const AnnotatorOnlyForPro = ({ onGoBack }: AnnotatorOnlyForProProps) => {
           size="lg"
           className="px-8 shadow-md hover:shadow-lg transition-all"
         >
-          Get Dyad Pro
+          Get Pro
         </Button>
       </div>
     </div>
