@@ -26,12 +26,12 @@ export function useRunApp() {
 
   const processProxyServerOutput = (output: AppOutput) => {
     const matchesProxyServerStart = output.message.includes(
-      "[dyad-proxy-server]started=[",
+      "[webia-proxy-server]started=[",
     );
     if (matchesProxyServerStart) {
       // Extract both proxy URL and original URL using regex
       const proxyUrlMatch = output.message.match(
-        /\[dyad-proxy-server\]started=\[(.*?)\]/,
+        /\[webia-proxy-server\]started=\[(.*?)\]/,
       );
       const originalUrlMatch = output.message.match(/original=\[(.*?)\]/);
 
@@ -107,9 +107,9 @@ export function useRunApp() {
           error instanceof Error
             ? { message: error.message, source: "dyad-app" }
             : {
-                message: error?.toString() || "Unknown error",
-                source: "dyad-app",
-              },
+              message: error?.toString() || "Unknown error",
+              source: "dyad-app",
+            },
         );
       } finally {
         setLoading(false);
@@ -135,9 +135,9 @@ export function useRunApp() {
         error instanceof Error
           ? { message: error.message, source: "dyad-app" }
           : {
-              message: error?.toString() || "Unknown error",
-              source: "dyad-app",
-            },
+            message: error?.toString() || "Unknown error",
+            source: "dyad-app",
+          },
       );
     } finally {
       setLoading(false);
@@ -199,9 +199,9 @@ export function useRunApp() {
           error instanceof Error
             ? { message: error.message, source: "dyad-app" }
             : {
-                message: error?.toString() || "Unknown error",
-                source: "dyad-app",
-              },
+              message: error?.toString() || "Unknown error",
+              source: "dyad-app",
+            },
         );
       } finally {
         setPreviewPanelKey((prevKey) => prevKey + 1);
